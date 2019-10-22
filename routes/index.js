@@ -52,16 +52,21 @@ app.post("/", (req, res, next) => {
     "')";
   pool.query(queryString, err => {
     if (err) {
-      res.redirect("/");
+      res.redirect("/error/exists");
     } else {
       console.log("new user created");
       res.redirect("/home");
-      app.get("/home", (request, response) => response.render("home"));
     }
   });
 });
 
-app.get("/", (request, response) => response.render("index"));
+//signup login
+app.get("/home", (request, response) => response.render("home"));
+app.get("/signup", (req, res) => res.render("signup"));
+app.get("/", (request, response) => response.render("login"));
+
+//error
+app.get("/error/exists", (request, response) => response.render("errorexists"));
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
