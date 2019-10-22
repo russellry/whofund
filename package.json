@@ -1,7 +1,28 @@
 {
-  "name": "node-api-postgres",
+  "name": "whofund",
   "version": "1.0.0",
-  "description": "RESTful API with Node.js, Express, and PostgreSQL",
+  "description": "",
   "main": "index.js",
-  "license": "MIT"
+  "scripts": {
+    "start": "node routes/index.js",
+    "dev": "nodemon routes/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/russellry/whofund.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/russellry/whofund/issues"
+  },
+  "homepage": "https://github.com/russellry/whofund#readme",
+  "dependencies": {
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "pg": "^7.12.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  }
 }

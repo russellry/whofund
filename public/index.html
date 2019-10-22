@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <form id="signUpForm" action="/" method="POST">
+      <div class="form-group">
+        <label for="signUpEmail">Email address</label>
+        <input
+          type="email"
+          class="form-control"
+          name="signUpEmail"
+          aria-describedby="emailHelp"
+          placeholder="Enter email"
+        />
+        <small id="emailHelp" class="form-text text-muted"
+          >We'll never share your email with anyone else.</small
+        >
+      </div>
+      <div class="form-group">
+        <label for="signUpUsername">Username</label>
+        <input
+          type="text"
+          class="form-control"
+          name="signUpUsername"
+          aria-describedby="usernameHelp"
+          placeholder="Username"
+        />
+      </div>
+      <div class="form-group">
+        <label for="signUpPassword">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          name="signUpPassword"
+          placeholder="Password"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+  </body>
+</html>
