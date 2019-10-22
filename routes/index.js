@@ -32,7 +32,7 @@ app.use(
     extended: true
   })
 );
-
+//DATABASE: User sign up form
 app.post("/", (req, res, next) => {
   var email = req.body.signUpEmail;
   var username = req.body.signUpUsername;
@@ -60,10 +60,47 @@ app.post("/", (req, res, next) => {
   });
 });
 
+//DATEBASE: Project sign up form
+app.post("/project/list", (req, res, next) => {
+  var projTitle = req.body.projectTitle;
+  var projDesc = req.body.projectDesc;
+  var projTargetAmt = req.body.projectTargetAmt;
+  var projDeadline = req.body.projectDeadline;
+  var queryString =
+    "INSERT INTO projects (projtitle, datecreated, description, targetamount, deadline) VALUES(";
+  var projDateCreated = getDateNow();
+  queryString +=
+    "'" +
+    projTitle +
+    "', '" +
+    projDateCreated +
+    "', '" +
+    projDesc +
+    "', '" +
+    projTargetAmt +
+    "', '" +
+    projDeadline +
+    "')";
+  pool.query(queryString, err => {
+    if (err) {
+      res.redirect("/error/projectexists");
+    } else {
+      console.log("new project created");
+      res.redirect(`/project/list`);
+    }
+  });
+});
+
 //signup login
 app.get("/home", (request, response) => response.render("home"));
 app.get("/signup", (req, res) => res.render("signup"));
 app.get("/", (request, response) => response.render("login"));
+
+//project pages
+app.get("/project/new", (request, response) => response.render("project-new"));
+app.get("/project/list", (request, response) =>
+  response.render("project-list")
+);
 
 //error
 app.get("/error/exists", (request, response) => response.render("errorexists"));
