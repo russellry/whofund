@@ -57,6 +57,7 @@ app.post("/", (req, res, next) => {
       console.log("new user created");
       res.redirect("/home");
     }
+    res.end();
   });
 });
 
@@ -88,6 +89,7 @@ app.post("/project/list", (req, res, next) => {
       console.log("new project created");
       res.redirect(`/project/list`);
     }
+    res.end();
   });
 });
 
@@ -98,9 +100,17 @@ app.get("/", (request, response) => response.render("login"));
 
 //project pages
 app.get("/project/new", (request, response) => response.render("project-new"));
-app.get("/project/list", (request, response) =>
-  response.render("project-list")
-);
+app.get("/project/list", (request, response) => {
+  var queryString = "Select * from projects";
+  pool.query(queryString, (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+      document.getElementById("project-list-data").innerHTML = data.rows;
+      console.log("got all of the projects");
+    }
+  });
+});
 
 //error
 app.get("/error/exists", (request, response) => response.render("errorexists"));
