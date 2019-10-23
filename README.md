@@ -1,4 +1,12 @@
-to run:
-node index.js
+To complete setup:
+cd into this folder
+npm install (will install all dependencies)
 
-credentials are stored in a separate file on config.json
+Then:
+change in index.js
+"postgres://[insert username here]:[insert password here]@localhost:5432/[insert database name here]"
+
+NOTE: create a database in postgres and populate with all of tables and values first.
+
+In terminal:
+npm start (to launch)

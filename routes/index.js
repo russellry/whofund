@@ -23,7 +23,9 @@ function getDateNow() {
 const { Pool } = require("pg");
 
 const pool = new Pool({
-  connectionString: "postgres://postgres:Pokemon2424!!@localhost:5432/whofund"
+  connectionString:
+    "postgres://[insert username here]:[insert password here]@localhost:5432/[insert database name here]"
+  // connectionString: "postgres://postgres:Pokemon2424!!@localhost:5432/whofund"
 });
 
 app.use(bodyParser.json());
