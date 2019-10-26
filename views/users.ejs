@@ -26,15 +26,20 @@
 	<div class="container-fluid">
 		<div class="row">
 			
-			<div style="float:left; width:500px; height:100%;"></div>
+			<div style="float:left; width:400px; height:100%;"></div>
 
 			<!--Content-->
 			<div class="col offset-0" style="margin-top:80px;">
 				<div class="container-fluid">
+					<h1>List of users</h1>
 					<br><br>
-					<h1>Welcome to <%=data[0].username%>'s profile!</h1>
-					<p>Join date: <%=data[0].joineddate%></p>
-					
+					<ol>
+						<% data.forEach((item) => { %>
+							<li href="<%= link %>" ><%=item.username %></li>
+							<!-- <br>
+							<p><%= item.joineddate %></p> -->
+						<% }); %>
+					</ol>
 				</div>
 			</div>
 

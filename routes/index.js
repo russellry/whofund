@@ -4,6 +4,11 @@ const port = 5432;
 var app = express();
 app.set("view engine", "ejs");
 
+// static files
+app.use('/', express.static('images'));
+app.use('/', express.static('javascripts'));
+app.use('/', express.static('stylesheets'));
+
 function getDateNow() {
   var today = new Date();
   var dd = today.getDate();
@@ -103,17 +108,18 @@ app.get("/", (request, response) => response.render("login"));
 // user pages
 app.get("/users", async (req, res) => {
   const rows = await readUsers();
-  res.setHeader("content-type", "application/json")
-  res.send(JSON.stringify(rows))
+  res.render("users", {data: rows});
 });
 
-app.get("/profile/:id", (req,res) => {
-  // var data = 
-  res.render("profile", {id: req.params.id});
+app.get("/profile/:username", async (req,res) => {
+  const row = await getUserInfo(req.params.username);
+  // await getUserInfo(req.params.username);
+  res.render("profile", {data: row, urllink:"/profile/" + row[0].username});
 });
 
 //project pages
 app.get("/project/new", (req, res) => res.render("project-new"));
+
 app.get("/project/list", (req, res) => {
   var queryString = "Select * from projects";
   pool.query(queryString, (err, data) => {
@@ -137,6 +143,16 @@ app.listen(port, () => {
 async function readUsers() {
   try {
     const results = await pool.query("select * from users");
+    return results.rows;
+  } catch (e) {
+    return [];
+  }
+}
+
+async function getUserInfo(username) {
+  try {
+    var queryString = "select * from users where username = '" + username + "'";
+    const results = await pool.query(queryString);
     return results.rows;
   } catch (e) {
     return [];
