@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const port = 3000;
+const port = 5432;
 var app = express();
 app.set("view engine", "ejs");
 
@@ -21,10 +21,13 @@ function getDateNow() {
 }
 
 const { Pool } = require("pg");
+const connectionString = 
+  "postgres://postgres:cs2102haha@localhost:5433/postgres"
 
 const pool = new Pool({
-  connectionString:
-    "postgres://[insert username here]:[insert password here]@localhost:5432/[insert database name here]"
+  connectionString: connectionString
+  // connectionString:
+  //   "postgres://postgres:cs2102haha@localhost:3000/postgres"
   // connectionString: "postgres://postgres:Pokemon2424!!@localhost:5432/whofund"
 });
 
@@ -99,6 +102,18 @@ app.post("/project/list", (req, res, next) => {
 app.get("/home", (request, response) => response.render("home"));
 app.get("/signup", (req, res) => res.render("signup"));
 app.get("/", (request, response) => response.render("login"));
+app.get("/profile", (request, response) => response.render("profile"));
+
+// user pages
+app.get("/users", async (req, res) => {
+  const rows = await readUsers();
+  res.setHeader("content-type", "application/json")
+  res.send(JSON.stringify(rows))
+});
+
+app.get("/profile/:id", (req,res) => {
+  res.render("profile", {id: req.params.id});
+});
 
 //project pages
 app.get("/project/new", (request, response) => response.render("project-new"));
@@ -120,3 +135,13 @@ app.get("/error/exists", (request, response) => response.render("errorexists"));
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
 });
+
+
+async function readUsers() {
+  try {
+    const results = await pool.query("select * from users");
+    return results.rows;
+  } catch (e) {
+    return [];
+  }
+}
