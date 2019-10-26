@@ -23,9 +23,9 @@ function getDateNow() {
 const { Pool } = require("pg");
 
 const pool = new Pool({
-  connectionString:
-    "postgres://[insert username here]:[insert password here]@localhost:5432/[insert database name here]"
-  // connectionString: "postgres://postgres:Pokemon2424!!@localhost:5432/whofund"
+  // connectionString:`
+  // "postgres://[insert username here]:[insert password here]@localhost:5432/[insert database name here]"
+  connectionString: "postgres://postgres:Pokemon2424!!@localhost:5432/whofund"
 });
 
 app.use(bodyParser.json());
@@ -36,23 +36,14 @@ app.use(
 );
 //DATABASE: User sign up form
 app.post("/", (req, res, next) => {
-  var email = req.body.signUpEmail;
   var username = req.body.signUpUsername;
   var password = req.body.signUpPassword;
   var queryString =
-    "INSERT INTO users (email, username, password, joineddate) VALUES(";
+    "INSERT INTO users (username, password, joineddate) VALUES(";
   var todayDate = getDateNow();
-  queryString +=
-    "'" +
-    email +
-    "', '" +
-    username +
-    "', '" +
-    password +
-    "', '" +
-    todayDate +
-    "')";
+  queryString += "'" + username + "', '" + password + "', '" + todayDate + "')";
   pool.query(queryString, err => {
+    ``;
     if (err) {
       res.redirect("/error/exists");
     } else {
