@@ -39,23 +39,14 @@ app.use(
 );
 //DATABASE: User sign up form
 app.post("/", (req, res, next) => {
-  var email = req.body.signUpEmail;
   var username = req.body.signUpUsername;
   var password = req.body.signUpPassword;
   var queryString =
-    "INSERT INTO users (email, username, password, joineddate) VALUES(";
+    "INSERT INTO users (username, password, joineddate) VALUES(";
   var todayDate = getDateNow();
-  queryString +=
-    "'" +
-    email +
-    "', '" +
-    username +
-    "', '" +
-    password +
-    "', '" +
-    todayDate +
-    "')";
+  queryString += "'" + username + "', '" + password + "', '" + todayDate + "')";
   pool.query(queryString, err => {
+
     if (err) {
       res.redirect("/error/exists");
     } else {
@@ -99,10 +90,15 @@ app.post("/project/list", (req, res, next) => {
 });
 
 //signup login
-app.get("/home", (request, response) => response.render("home"));
+app.get("/home", (req, res) => {
+  var userInfo = "Select * from users where..."; //TODO: edit later...
+  var username = req.body.username;
+  var password = req.body.password;
+  
+  res.render("home");
+});
 app.get("/signup", (req, res) => res.render("signup"));
 app.get("/", (request, response) => response.render("login"));
-app.get("/profile", (request, response) => response.render("profile"));
 
 // user pages
 app.get("/users", async (req, res) => {
@@ -112,12 +108,13 @@ app.get("/users", async (req, res) => {
 });
 
 app.get("/profile/:id", (req,res) => {
+  // var data = 
   res.render("profile", {id: req.params.id});
 });
 
 //project pages
-app.get("/project/new", (request, response) => response.render("project-new"));
-app.get("/project/list", (request, response) => {
+app.get("/project/new", (req, res) => res.render("project-new"));
+app.get("/project/list", (req, res) => {
   var queryString = "Select * from projects";
   pool.query(queryString, (err, data) => {
     if (err) {
@@ -130,7 +127,7 @@ app.get("/project/list", (request, response) => {
 });
 
 //error
-app.get("/error/exists", (request, response) => response.render("errorexists"));
+app.get("/error/exists", (req, res) => res.render("errorexists"));
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
