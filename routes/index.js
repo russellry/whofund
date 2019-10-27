@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcrypt");
 const port = 5432;
 var app = express();
 app.set("view engine", "ejs");
@@ -58,7 +59,7 @@ app.post("/user-signup", async (req, res, next) => {
        res.redirect("/error/userexists");
       } else {
         console.log("new user created");
-        res.redirect("/home");
+        res.redirect("/");
       }
       // res.end();
     });
