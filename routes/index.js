@@ -1,8 +1,13 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const port = 3000;
+const port = 5432;
 var app = express();
 app.set("view engine", "ejs");
+
+// static files
+app.use('/', express.static('images'));
+app.use('/', express.static('javascripts'));
+app.use('/', express.static('stylesheets'));
 
 function getDateNow() {
   var today = new Date();
@@ -21,11 +26,14 @@ function getDateNow() {
 }
 
 const { Pool } = require("pg");
+const connectionString = 
+  "postgres://postgres:cs2102haha@localhost:5433/postgres"
 
 const pool = new Pool({
-  // connectionString:`
-  // "postgres://[insert username here]:[insert password here]@localhost:5432/[insert database name here]"
-  connectionString: "postgres://postgres:Pokemon2424!!@localhost:5432/whofund"
+  connectionString: connectionString
+  // connectionString:
+  //   "postgres://postgres:cs2102haha@localhost:3000/postgres"
+  // connectionString: "postgres://postgres:Pokemon2424!!@localhost:5432/whofund"
 });
 
 app.use(bodyParser.json());
@@ -43,7 +51,7 @@ app.post("/", (req, res, next) => {
   var todayDate = getDateNow();
   queryString += "'" + username + "', '" + password + "', '" + todayDate + "')";
   pool.query(queryString, err => {
-    ``;
+
     if (err) {
       res.redirect("/error/exists");
     } else {
@@ -91,25 +99,85 @@ app.get("/home", (req, res) => {
   var userInfo = "Select * from users where..."; //TODO: edit later...
   var username = req.body.username;
   var password = req.body.password;
-
+  
   res.render("home");
 });
 app.get("/signup", (req, res) => res.render("signup"));
-app.get("/", (req, res) => res.render("login"));
+app.get("/", (request, response) => response.render("login"));
+
+// user pages
+app.get("/users", async (req, res) => {
+  const rows = await readUsers();
+  res.render("users", {data: rows});
+});
+
+app.get("/profile/:username", async (req,res) => {
+  const row = await getUserInfo(req.params.username);
+  // await getUserInfo(req.params.username);
+  res.render("profile", {data: row});
+});
+
+// user page functions
+async function readUsers() {
+  try {
+    const results = await pool.query("select * from users");
+    return results.rows;
+  } catch (e) {
+    return [];
+  }
+}
+
+async function getUserInfo(username) {
+  try {
+    var queryString = "select * from users where username = '" + username + "'";
+    const results = await pool.query(queryString);
+    return results.rows;
+  } catch (e) {
+    return [];
+  }
+}
 
 //project pages
 app.get("/project/new", (req, res) => res.render("project-new"));
-app.get("/project/list", (req, res) => {
-  var queryString = "Select * from projects";
-  pool.query(queryString, (err, data) => {
-    if (err) {
-      console.log(err);
-    } else {
-      document.getElementById("project-list-data").innerHTML = data.rows;
-      console.log("got all of the projects");
-    }
-  });
+
+app.get("/projects", async (req, res) => {
+  const rows = await readProjects();
+  res.render("projects", {data: rows});
+  // var queryString = "Select * from projects";
+  // pool.query(queryString, (err, data) => {
+  //   if (err) {
+  //     console.log(err);
+  //   } else {
+  //     document.getElementById("project-list-data").innerHTML = data.rows;
+  //     console.log("got all of the projects");
+  //   }
+  // });
 });
+
+app.get("/project/:projtitle", async (req, res) => {
+  const row = await getProjectInfo(req.params.projtitle);
+  res.render("project-detail", {data: row});
+});
+
+// project page functions
+async function readProjects() {
+  try {
+    const results = await pool.query("select * from projects");
+    return results.rows;
+  } catch (e) {
+    return [];
+  }
+}
+
+async function getProjectInfo(projTitle) {
+  try {
+    var queryString = "select * from projects where projtitle = '" + projTitle + "'";
+    const results = await pool.query(queryString);
+    return results.rows;
+  } catch (e) {
+    return [];
+  }
+}
 
 //error
 app.get("/error/exists", (req, res) => res.render("errorexists"));
