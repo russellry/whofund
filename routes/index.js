@@ -117,29 +117,7 @@ app.get("/profile/:username", async (req,res) => {
   res.render("profile", {data: row});
 });
 
-//project pages
-app.get("/project/new", (req, res) => res.render("project-new"));
-
-app.get("/project/list", (req, res) => {
-  var queryString = "Select * from projects";
-  pool.query(queryString, (err, data) => {
-    if (err) {
-      console.log(err);
-    } else {
-      document.getElementById("project-list-data").innerHTML = data.rows;
-      console.log("got all of the projects");
-    }
-  });
-});
-
-//error
-app.get("/error/exists", (req, res) => res.render("errorexists"));
-
-app.listen(port, () => {
-  console.log(`App running on port ${port}.`);
-});
-
-
+// user page functions
 async function readUsers() {
   try {
     const results = await pool.query("select * from users");
@@ -158,3 +136,52 @@ async function getUserInfo(username) {
     return [];
   }
 }
+
+//project pages
+app.get("/project/new", (req, res) => res.render("project-new"));
+
+app.get("/projects", async (req, res) => {
+  const rows = await readProjects();
+  res.render("projects", {data: rows});
+  // var queryString = "Select * from projects";
+  // pool.query(queryString, (err, data) => {
+  //   if (err) {
+  //     console.log(err);
+  //   } else {
+  //     document.getElementById("project-list-data").innerHTML = data.rows;
+  //     console.log("got all of the projects");
+  //   }
+  // });
+});
+
+app.get("/project/:projtitle", async (req, res) => {
+  const row = await getProjectInfo(req.params.projtitle);
+  res.render("project-detail", {data: row});
+});
+
+// project page functions
+async function readProjects() {
+  try {
+    const results = await pool.query("select * from projects");
+    return results.rows;
+  } catch (e) {
+    return [];
+  }
+}
+
+async function getProjectInfo(projTitle) {
+  try {
+    var queryString = "select * from projects where projtitle = '" + projTitle + "'";
+    const results = await pool.query(queryString);
+    return results.rows;
+  } catch (e) {
+    return [];
+  }
+}
+
+//error
+app.get("/error/exists", (req, res) => res.render("errorexists"));
+
+app.listen(port, () => {
+  console.log(`App running on port ${port}.`);
+});
