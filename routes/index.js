@@ -114,7 +114,7 @@ app.get("/users", async (req, res) => {
 app.get("/profile/:username", async (req,res) => {
   const row = await getUserInfo(req.params.username);
   // await getUserInfo(req.params.username);
-  res.render("profile", {data: row, urllink:"/profile/" + row[0].username});
+  res.render("profile", {data: row});
 });
 
 //project pages
