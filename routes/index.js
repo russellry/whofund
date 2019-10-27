@@ -43,27 +43,37 @@ app.use(
   })
 );
 //DATABASE: User sign up form
-app.post("/", (req, res, next) => {
+app.post("/user-signup", async (req, res, next) => {
   var username = req.body.signUpUsername;
-  var password = req.body.signUpPassword;
-  var queryString =
-    "INSERT INTO users (username, password, joineddate) VALUES(";
-  var todayDate = getDateNow();
-  queryString += "'" + username + "', '" + password + "', '" + todayDate + "')";
-  pool.query(queryString, err => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.signUpPassword, 10)
+    // var password = req.body.signUpPassword;
+    var queryString =
+      "INSERT INTO users (username, password, joineddate) VALUES(";
+    var todayDate = getDateNow();
+    queryString += "'" + username + "', '" + hashedPassword + "', '" + todayDate + "')";
+    pool.query(queryString, err => {
 
-    if (err) {
-      res.redirect("/error/exists");
-    } else {
-      console.log("new user created");
-      res.redirect("/home");
-    }
-    res.end();
-  });
+      if (err) {
+       res.redirect("/error/userexists");
+      } else {
+        console.log("new user created");
+        res.redirect("/home");
+      }
+      // res.end();
+    });
+  } catch {
+    res.redirect("/error/userexists");
+  }
+});
+
+// user exists error page
+app.get("/error/userexists", (req,res) => {
+  res.render("user-exists");
 });
 
 //DATEBASE: Project sign up form
-app.post("/project/list", (req, res, next) => {
+app.post("/project-signup", (req, res, next) => {
   var projTitle = req.body.projectTitle;
   var projDesc = req.body.projectDesc;
   var projTargetAmt = req.body.projectTargetAmt;
@@ -88,22 +98,34 @@ app.post("/project/list", (req, res, next) => {
       res.redirect("/error/projectexists");
     } else {
       console.log("new project created");
-      res.redirect(`/project/list`);
+      res.redirect(`/projects`);
     }
     res.end();
   });
 });
 
-//signup login
-app.get("/home", (req, res) => {
-  var userInfo = "Select * from users where..."; //TODO: edit later...
-  var username = req.body.username;
-  var password = req.body.password;
-  
-  res.render("home");
+// project exists error page
+app.get("/error/projectexists", (res,req) => {
+  res.render("project-exists");
 });
-app.get("/signup", (req, res) => res.render("signup"));
-app.get("/", (request, response) => response.render("login"));
+
+//signup login
+app.get("/login", (req, res) => {
+  // var userInfo = "Select * from users where..."; //TODO: edit later...
+  // var username = req.body.username;
+  // var password = req.body.password;
+  
+  // res.render("home");
+  res.render("login.ejs");
+});
+app.get("/signup", (req, res) => res.render("user-signup"));
+app.get("/", (request, response) => response.render("home"));
+
+// app.post("/login", passport.authenticate('local', {
+//   successRedirect: '/home',
+//   failureRedirect: '/login',
+//   failureFlash: true
+// }))
 
 // user pages
 app.get("/users", async (req, res) => {
@@ -138,7 +160,7 @@ async function getUserInfo(username) {
 }
 
 //project pages
-app.get("/project/new", (req, res) => res.render("project-new"));
+app.get("/project/new", (req, res) => res.render("project-signup"));
 
 app.get("/projects", async (req, res) => {
   const rows = await readProjects();
